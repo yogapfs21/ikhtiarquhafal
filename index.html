@@ -156,6 +156,7 @@ display: grid;
 grid-template-columns: 1fr 1fr; /* Kembali ke 2 Kolom */
 gap: 15px;
 margin-top: 20px;
+  }  
 /* Label penanda zona (opsional agar tidak bingung) */
 .zone::before {
 content: attr(id);
@@ -419,81 +420,92 @@ border-radius: 5px;
             document.getElementById('login-box').style.display = isLogin ? 'none' : 'block';
             document.getElementById('register-box').style.display = isLogin ? 'block' : 'none';
         }
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzphzxh2DcsxfrLOyg6gZMm6zaQcpq0LIib-Z-Y8ofdaB-or7FR18Az1xBoQ3eJnepPZQ/exec";
-        async function handleRegisterSubmit() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const wa = document.getElementById('regWA').value.trim();
-            const dom = document.getElementById('regDomisili').value.trim();
-            const ig = document.getElementById('regIG').value.trim() || "-";
-            const pin = document.getElementById('regPin').value.trim();
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpTprWCyzfToRF151aHBpUcCA90EJHaiJzi-kS1hHKV8aqWrF3ELZJ3HEmWSzhHlS6aw/exec";
+async function handleRegisterSubmit() {
+    // 1. Ambil data dari input
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const wa = document.getElementById('regWA').value.trim();
+    const dom = document.getElementById('regDomisili').value.trim(); // Ini variabel 'dom'
+    const ig = document.getElementById('regIG').value.trim() || "-";
+    const pin = document.getElementById('regPin').value.trim();
 
-            if(!name || !wa || pin.length < 4) return alert("Lengkapi Form & PIN min 4 angka!");
+    // 2. Validasi sederhana
+    if(!name || !wa || pin.length < 4) {
+        return alert("Lengkapi Form & PIN minimal 4 angka!");
+    }
 
-          const newUser = { action: "register", pin, name, email, wa, domisili, ig };
-// 1. KIRIM KE GOOGLE SHEETS
-try {
-await fetch(SCRIPT_URL, {
-method: "POST",
-body: JSON.stringify(newUser)
-});
+    // 3. Susun data (Pastikan nama variabel di sini benar)
+    const newUser = { 
+        action: "register", 
+        pin: pin, 
+        name: name, 
+        email: email, 
+        wa: wa, 
+        domisili: dom, // Pakai 'dom' yang diambil di atas
+        ig: ig 
+    };
 
-            const pesan = `Assalamu'alaikum Admin Ikhtiarqu, saya ingin aktivasi akun:%0A%0ANama: ${name}%0AEmail: ${email}%0AWA: ${wa}%0ADomisili: ${dom}%0AIG: ${ig}%0APIN: ${pin}`;
-            window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank'); // Ganti nomor WA Admin di sini
-            
-            alert("Data terkirim! Silakan tunggu konfirmasi Admin via WhatsApp.");
-            location.reload();
-        }
+    try {
+        // 4. Kirim ke Google Sheets
+        // Gunakan mode: 'no-cors' agar tidak diblokir browser
+        await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newUser)
+        });
+
+        // 5. Arahkan ke WhatsApp Admin untuk aktivasi
+        const pesan = `Assalamu'alaikum Admin Ikhtiarqu, saya ingin aktivasi akun:%0A%0ANama: ${name}%0ADomisili: ${dom}%0APIN: ${pin}`;
+        window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank');
+        
+        alert("Data pendaftaran terkirim! Silakan tunggu konfirmasi Admin via WhatsApp.");
+        location.reload(); // Refresh halaman setelah daftar
+    } catch(e) {
+        console.error("Error:", e);
+        alert("Waduh, koneksi ke 'langit' terganggu. Coba lagi ya!");
+    }
+}
 
 async function handleLogin() {
-const pinInput = document.getElementById('pinInput').value.trim();
-const errorEl = document.getElementById('loginError');
+    const pinInput = document.getElementById('login-pin').value.trim();
+    const errorEl = document.getElementById('login-err');
 
-if (!pinInput) {
-alert("Masukkan PIN dulu, Fer!");
-return;
-}
+    if (!pinInput) return alert("PIN-nya mana, Mas?");
 
-errorEl.textContent = "⌛ Mengecek PIN di Langit...";
-errorEl.classList.remove('hidden');
+    errorEl.innerText = "⌛ Menghubungkan ke langit...";
 
-try {
-// Ambil data terbaru dari Google Sheets
-const response = await fetch(SCRIPT_URL);
-if (!response.ok) throw new Error('Network error');
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const allUsers = await response.json();
 
-const users = await response.json();
+        // Cari user berdasarkan PIN
+        const user = allUsers.find(u => u.pin === pinInput);
 
-// Cari user yang PIN-nya cocok
-const user = users.find(u => u.pin === pinInput);
-
-if (user) {
-// Cek apakah statusnya sudah 'active' (ditulis manual oleh kamu di Sheets)
-if (user.status === 'active') {
-currentUser = {
-pin: user.pin,
-name: user.name,
-role: 'user'
-};
-sessionStorage.setItem('currentUserPin', pinInput);
-errorEl.classList.add('hidden');
-showMainApp();
-} else {
-errorEl.textContent = '🚫 Akun terdaftar tapi BELUM AKTIF. Chat Admin ya!';
-}
-} else {
-// Jika tidak ada di Sheets, cek Admin Default
-if (pinInput === '2399') {
-currentUser = { pin: '2399', name: 'Administrator', role: 'admin' };
-sessionStorage.setItem('currentUserPin', '2399');
-showMainApp();
-} else {
-errorEl.textContent = '❌ PIN salah atau belum terdaftar.';
-}
-}
-} catch (e) {
-console.error(e);
-errorEl.textContent = '📡 Koneksi internet bermasalah. Coba lagi.';
+        if (user) {
+            if (user.status === 'active') {
+                currentUser = user;
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('display-name').innerText = currentUser.name;
+                
+                // Cek jika dia Admin (berdasarkan PIN khusus atau Role)
+                if(pinInput === "2399") {
+                    document.getElementById('admin-btn').style.display = 'inline-block';
+                }
+                
+                updateStats();
+                updateLogDisplay();
+            } else {
+                errorEl.innerText = "🚫 Akun belum aktif. Hubungi Admin.";
+            }
+        } else {
+            errorEl.innerText = "❌ PIN salah atau belum terdaftar.";
+        }
+    } catch (e) {
+        errorEl.innerText = "📡 Gagal koneksi ke database.";
+    }
 }
                 
                 document.getElementById('auth-screen').style.display = 'none';
@@ -525,20 +537,6 @@ currentAudio = null;
 
 console.log("Logout berhasil.");
 }
-
-// Pastikan handleLogin juga sinkron
-function handleLogin() {
-const pin = document.getElementById('login-pin').value;
-// Ambil data users terbaru dari localstorage
-const currentUsers = JSON.parse(localStorage.getItem('iq_users')) || users;
-const user = currentUsers.find(u => u.pin === pin);
-
-if(user) {
-if(user.status !== 'active') return alert("Akun belum aktif. Hubungi Admin.");
-currentUser = user;
-document.getElementById('auth-screen').style.display = 'none';
-document.getElementById('main-app').style.display = 'block';
-document.getElementById('display-name').innerText = currentUser.name;
 
 // Cek Developer Mode
 document.getElementById('admin-btn').style.display = (user.role === 'admin') ? 'inline-block' : 'none';
