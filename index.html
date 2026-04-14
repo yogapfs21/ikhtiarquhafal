@@ -151,27 +151,34 @@
             border: none;
             font-weight: bold;
         }
-.board {
-display: grid;
-grid-template-columns: 1fr 1fr; /* Kembali ke 2 Kolom */
-gap: 15px;
-margin-top: 20px;
-  }  
-/* Label penanda zona (opsional agar tidak bingung) */
-.zone::before {
-content: attr(id);
-font-size: 0.6rem;
-color: #475569;
-position: absolute;
-top: 2px;
-right: 5px;
-text-transform: uppercase;
-}
-/* Penanda khusus zona tengah agar tidak tertukar */
-#kiri-tengah, #kanan-tengah {
-border-color: #3b82f6; /* Warna biru untuk pembeda baris tengah */
-background: rgba(59, 130, 246, 0.05);
-}
+
+        .board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /* Kembali ke 2 Kolom */
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* Label penanda zona (opsional agar tidak bingung) */
+        .zone::before {
+            content: attr(id);
+            font-size: 0.6rem;
+            color: #475569;
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Penanda khusus zona tengah agar tidak tertukar */
+        #kiri-tengah,
+        #kanan-tengah {
+            border-color: #3b82f6;
+            /* Warna biru untuk pembeda baris tengah */
+            background: rgba(59, 130, 246, 0.05);
+        }
+
         .zone {
             border: 2px solid #334155;
             border-radius: 12px;
@@ -224,33 +231,38 @@ background: rgba(59, 130, 246, 0.05);
             border: 2px solid var(--accent);
             margin-bottom: 20px;
         }
-/* Tambahkan di dalam <style>
-    */ .hidden-verse .arabic {
-        display: none;
-        /* Menyembunyikan teks arab saat kuis */
-    }
 
-    .hidden-verse b {
-        display: inline;
-        /* Tetap tampilkan nomor ayat agar tahu mana yang ditebak */
-    }
+        /* Tambahkan di dalam <style>
+    */
+        .hidden-verse .arabic {
+            display: none;
+            /* Menyembunyikan teks arab saat kuis */
+        }
+
+        .hidden-verse b {
+            display: inline;
+            /* Tetap tampilkan nomor ayat agar tahu mana yang ditebak */
+        }
+
         .active-target {
             border: 2px solid var(--warn) !important;
             box-shadow: 0 0 15px var(--warn);
         }
-/* Sembunyikan teks Arab tapi biarkan nomor ayat tetap ada */
-.hidden-verse .arabic {
-visibility: hidden;
-}
 
-/* Tetap tampilkan nomor ayat di dalam span arabic agar user tahu itu ayat ke berapa */
-.hidden-verse .arabic b {
-visibility: visible;
-color: var(--accent);
-background: rgba(16, 185, 129, 0.1);
-padding: 2px 8px;
-border-radius: 5px;
-}
+        /* Sembunyikan teks Arab tapi biarkan nomor ayat tetap ada */
+        .hidden-verse .arabic {
+            visibility: hidden;
+        }
+
+        /* Tetap tampilkan nomor ayat di dalam span arabic agar user tahu itu ayat ke berapa */
+        .hidden-verse .arabic b {
+            visibility: visible;
+            color: var(--accent);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
         .log-item {
             display: flex;
             justify-content: space-between;
@@ -337,55 +349,55 @@ border-radius: 5px;
             </div>
 
             <div class="panel">
-<div class="input-row">
-    <input type="number" id="surah" placeholder="Sura" style="width: 60px;">
-    <input type="number" id="start" placeholder="Ayat" style="width: 50px;">
-    <input type="number" id="end" placeholder="S/d" style="width: 50px;">
+                <div class="input-row">
+                    <input type="number" id="surah" placeholder="Sura" style="width: 60px;">
+                    <input type="number" id="start" placeholder="Ayat" style="width: 50px;">
+                    <input type="number" id="end" placeholder="S/d" style="width: 50px;">
 
-    <select id="col">
+                    <select id="col">
         <option value="kiri">KIRI</option>
         <option value="kanan">KANAN</option>
     </select>
 
-    <select id="zone">
+                    <select id="zone">
         <option value="atas">ATAS</option>
         <option value="tengah">TENGAH</option>
         <option value="bawah">BAWAH</option>
     </select>
 
-    <button onclick="fetchAyah()" class="btn-accent">Tambah</button>
-</div>
-                    <button onclick="resetBoard()" class="btn-err">Reset</button>
+                    <button onclick="fetchAyah()" class="btn-accent">Tambah</button>
                 </div>
-                <div class="input-row">
-                    <button class="btn-warn" onclick="startSession('lafal')">Kuis Hafalan</button>
-                    <button class="btn-warn" onclick="startSession('posisi')" style="background:var(--admin); color:white;">Kuis Posisi</button>
-                </div>
+                <button onclick="resetBoard()" class="btn-err">Reset</button>
             </div>
-
-            <div class="quiz-box" id="quiz-ui" style="display:none;">
-                <h4 id="session-info" style="color:var(--accent); margin:0;">1 / 5</h4>
-                <p id="instruction" style="margin: 10px 0; font-weight: bold;">Instruksi...</p>
-                <div id="live-preview" class="arabic">...</div>
-                <button id="mic-btn" onclick="toggleMic()" class="btn-warn" style="padding:15px 40px; border-radius:50px;">🎤 Bicara</button>
-                <button id="next-btn" onclick="nextQuestion()" class="btn-accent" style="display:none; padding:15px 40px; border-radius:50px;">➡️ Lanjut</button>
-                <div id="feedback-area" style="margin-top:15px;"></div>
+            <div class="input-row">
+                <button class="btn-warn" onclick="startSession('lafal')">Kuis Hafalan</button>
+                <button class="btn-warn" onclick="startSession('posisi')" style="background:var(--admin); color:white;">Kuis Posisi</button>
             </div>
+        </div>
 
-<div class="board">
-    <div class="column">
-        <h5 style="text-align:center;">KIRI</h5>
-        <div id="kiri-atas" class="zone"></div>
-        <div id="kiri-tengah" class="zone"></div>
-        <div id="kiri-bawah" class="zone"></div>
-    </div>
-    <div class="column">
-        <h5 style="text-align:center;">KANAN</h5>
-        <div id="kanan-atas" class="zone"></div>
-        <div id="kanan-tengah" class="zone"></div>
-        <div id="kanan-bawah" class="zone"></div>
-    </div>
-</div>
+        <div class="quiz-box" id="quiz-ui" style="display:none;">
+            <h4 id="session-info" style="color:var(--accent); margin:0;">1 / 5</h4>
+            <p id="instruction" style="margin: 10px 0; font-weight: bold;">Instruksi...</p>
+            <div id="live-preview" class="arabic">...</div>
+            <button id="mic-btn" onclick="toggleMic()" class="btn-warn" style="padding:15px 40px; border-radius:50px;">🎤 Bicara</button>
+            <button id="next-btn" onclick="nextQuestion()" class="btn-accent" style="display:none; padding:15px 40px; border-radius:50px;">➡️ Lanjut</button>
+            <div id="feedback-area" style="margin-top:15px;"></div>
+        </div>
+
+        <div class="board">
+            <div class="column">
+                <h5 style="text-align:center;">KIRI</h5>
+                <div id="kiri-atas" class="zone"></div>
+                <div id="kiri-tengah" class="zone"></div>
+                <div id="kiri-bawah" class="zone"></div>
+            </div>
+            <div class="column">
+                <h5 style="text-align:center;">KANAN</h5>
+                <div id="kanan-atas" class="zone"></div>
+                <div id="kanan-tengah" class="zone"></div>
+                <div id="kanan-bawah" class="zone"></div>
+            </div>
+        </div>
 
 
         <div id="mushaf-area" style="display:none;">
@@ -402,351 +414,279 @@ border-radius: 5px;
     </div>
 
     <script>
-        // --- DATA ---
-        let users = JSON.parse(localStorage.getItem('iq_users')) || [{ name: "Ferdi Admin", pin: "2399", role: "admin", status: "active" }];
-        let score = parseInt(localStorage.getItem('iq_score')) || 0;
-        let corrects = parseInt(localStorage.getItem('iq_corrects')) || 0;
-        let history = JSON.parse(localStorage.getItem('iq_history')) || [];
-        let logHafalan = JSON.parse(localStorage.getItem('iq_log')) || [];
+        const SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbyOJeJXMRs4YVzOeM5coVoi36obeFR38ZMYj3qt5i2yMUlivE2GcVSVhOXMiaLMsUcT0A/exec";
 
-        let currentUser = user, quizMode = '', curSess = 0, maxSess = 0, targetAyah = null, lastSpeech = '', currentAudio = null, ayahQueue = [];
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRec();
-        recognition.interimResults = true; recognition.continuous = true;
+// --- GLOBAL STATE ---
+let currentUser = null;
+let users = []; // Untuk keperluan Admin Panel
+let score = parseInt(localStorage.getItem('iq_score')) || 0;
+let corrects = parseInt(localStorage.getItem('iq_corrects')) || 0;
+let history = JSON.parse(localStorage.getItem('iq_history')) || [];
+let logHafalan = JSON.parse(localStorage.getItem('iq_log')) || [];
 
-        // --- AUTH & REGISTER ---
-        function toggleAuthMode() {
-            const isLogin = document.getElementById('login-box').style.display !== 'none';
-            document.getElementById('login-box').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('register-box').style.display = isLogin ? 'block' : 'none';
-        }
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpTprWCyzfToRF151aHBpUcCA90EJHaiJzi-kS1hHKV8aqWrF3ELZJ3HEmWSzhHlS6aw/exec";
-async function handleRegisterSubmit() {
-    // 1. Ambil data dari input
-    const name = document.getElementById('regName').value.trim();
-    const email = document.getElementById('regEmail').value.trim();
-    const wa = document.getElementById('regWA').value.trim();
-    const dom = document.getElementById('regDomisili').value.trim(); // Ini variabel 'dom'
-    const ig = document.getElementById('regIG').value.trim() || "-";
-    const pin = document.getElementById('regPin').value.trim();
+let quizMode = '', curSess = 0, maxSess = 0, targetAyah = null, lastSpeech = '', currentAudio = null, ayahQueue = [];
 
-    // 2. Validasi sederhana
-    if(!name || !wa || pin.length < 4) {
-        return alert("Lengkapi Form & PIN minimal 4 angka!");
-    }
+// --- SPEECH RECOGNITION SETUP ---
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRec();
+recognition.interimResults = true;
+recognition.continuous = true;
 
-    // 3. Susun data (Pastikan nama variabel di sini benar)
-    const newUser = { 
-        action: "register", 
-        pin: pin, 
-        name: name, 
-        email: email, 
-        wa: wa, 
-        domisili: dom, // Pakai 'dom' yang diambil di atas
-        ig: ig 
-    };
-
-    try {
-        // 4. Kirim ke Google Sheets
-        // Gunakan mode: 'no-cors' agar tidak diblokir browser
-        await fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors", 
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newUser)
-        });
-
-        // 5. Arahkan ke WhatsApp Admin untuk aktivasi
-        const pesan = `Assalamu'alaikum Admin Ikhtiarqu, saya ingin aktivasi akun:%0A%0ANama: ${name}%0ADomisili: ${dom}%0APIN: ${pin}`;
-        window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank');
-        
-        alert("Data pendaftaran terkirim! Silakan tunggu konfirmasi Admin via WhatsApp.");
-        location.reload(); // Refresh halaman setelah daftar
-    } catch(e) {
-        console.error("Error:", e);
-        alert("Waduh, koneksi ke 'langit' terganggu. Coba lagi ya!");
-    }
+// --- AUTH FUNCTIONS ---
+function toggleAuthMode() {
+const loginBox = document.getElementById('login-box');
+const registerBox = document.getElementById('register-box');
+if (loginBox.style.display !== 'none') {
+loginBox.style.display = 'none';
+registerBox.style.display = 'block';
+} else {
+loginBox.style.display = 'block';
+registerBox.style.display = 'none';
 }
+}
+
+async function handleRegisterSubmit() {
+const name = document.getElementById('regName').value.trim();
+const email = document.getElementById('regEmail').value.trim();
+const wa = document.getElementById('regWA').value.trim();
+const dom = document.getElementById('regDomisili').value.trim();
+const ig = document.getElementById('regIG').value.trim() || "-";
+const pin = document.getElementById('regPin').value.trim();
+
+if (!name || !wa || pin.length < 4) return alert("Lengkapi data & PIN min 4 angka!"); 
+const params=new URLSearchParams(); 
+params.append('action', 'register' ); 
+params.append('name', name); 
+params.append('email', email);
+params.append('wa', wa); 
+params.append('domisili', dom); 
+params.append('ig', ig); 
+params.append('pin', pin); 
+
+try {
+    fetch(SCRIPT_URL, { 
+    method: "POST" , 
+    mode: "no-cors" , 
+    body: params }); 
+    const pesan=`Assalamu'alaikum Admin, aktivasi akun Ikhtiarqu:%0ANama: ${name}%0ADomisili: ${dom}%0APIN: ${pin}`;
+    window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank' ); 
+    alert("Data pendaftaran terkirim! Silakan tunggu konfirmasi Admin via WhatsApp."); location.reload(); } catch (e) { alert("Waduh, koneksi bermasalah."); } }
 
 async function handleLogin() {
     const pinInput = document.getElementById('login-pin').value.trim();
     const errorEl = document.getElementById('login-err');
 
-    if (!pinInput) return alert("PIN-nya mana, Mas?");
+    if (!pinInput) return alert("Isi PIN!");
 
-    errorEl.innerText = "⌛ Menghubungkan ke langit...";
+    errorEl.innerText = "⌛ Mengecek database...";
 
     try {
-        const response = await fetch(SCRIPT_URL);
-        const allUsers = await response.json();
-
-        // Cari user berdasarkan PIN
-        const user = allUsers.find(u => u.pin === pinInput);
+        const res = await fetch(SCRIPT_URL);
+        const allUsers = await res.json();
+        const user = allUsers.find(u => u.pin.toString() === pinInput);
 
         if (user) {
             if (user.status === 'active') {
                 currentUser = user;
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                document.getElementById('display-name').innerText = currentUser.name;
-                
-                // Cek jika dia Admin (berdasarkan PIN khusus atau Role)
-                if(pinInput === "2399") {
-                    document.getElementById('admin-btn').style.display = 'inline-block';
-                }
-                
+                document.getElementById('display-name').innerText = user.name;
                 updateStats();
-                updateLogDisplay();
             } else {
-                errorEl.innerText = "🚫 Akun belum aktif. Hubungi Admin.";
+                errorEl.innerText = "🚫 Akun belum aktif.";
             }
         } else {
-            errorEl.innerText = "❌ PIN salah atau belum terdaftar.";
+            errorEl.innerText = "❌ PIN tidak terdaftar.";
         }
     } catch (e) {
-        errorEl.innerText = "📡 Gagal koneksi ke database.";
+        errorEl.innerText = "📡 Gagal ambil data GSheet.";
     }
 }
-                
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-                document.getElementById('display-name').innerText = currentUser.name;
-                document.getElementById('admin-btn').style.display = (user.role === 'admin') ? 'inline-block' : 'none';
-                updateStats();
-                updateLogDisplay();
-            } else { document.getElementById('login-err').innerText = "PIN Salah!"; }
+    function handleLogout() {
+    currentUser = null;
+    document.getElementById('main-app').style.display = 'none';
+    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('login-pin').value = '';
+    if (currentAudio) currentAudio.pause();
+    }
+
+    // --- ADMIN PANEL ---
+    function openAdmin() { document.getElementById('admin-panel').style.display = 'flex'; renderUserAdmin(); }
+    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+    function renderUserAdmin() {
+    const list = document.getElementById('user-list-admin');
+    list.innerHTML = users.length ? '' : 'Memuat data...';
+    users.forEach((u, i) => {
+    list.innerHTML += `<div class="panel" style="padding:10px; margin-bottom:5px; font-size:0.8rem;">
+        <b>${u.name}</b> (${u.pin}) - ${u.status.toUpperCase()}<br>
+        <p style="margin:5px 0; color:#94a3b8">${u.domisili || 'No Dom'}</p>
+    </div>`;
+    });
+    }
+
+    // --- APP LOGIC (TABS, MUSHAF, FETCH) ---
+    function switchTab(name) {
+    document.getElementById('papan-area').style.display = (name === 'papan') ? 'block' : 'none';
+    document.getElementById('mushaf-area').style.display = (name === 'mushaf') ? 'block' : 'none';
+    document.getElementById('tab-papan-btn').classList.toggle('active', name === 'papan');
+    document.getElementById('tab-mushaf-btn').classList.toggle('active', name === 'mushaf');
+    }
+
+    async function bukaMushafPresisi() {
+    const s = document.getElementById('mushaf-surah').value;
+    const a = document.getElementById('mushaf-ayah').value;
+    if (!s || !a) return alert("Isi Surah & Ayat!");
+    try {
+    const res = await fetch(`https://api.alquran.cloud/v1/ayah/${s}:${a}`);
+    const d = await res.json();
+    window.open(`https://quran.kemenag.go.id/quran/per-halaman/surah/${s}?page=${d.data.page}`, '_blank');
+    } catch (e) { alert("Data tidak ditemukan."); }
+    }
+
+    async function fetchAyah() {
+    const s = document.getElementById('surah').value;
+    const a1 = parseInt(document.getElementById('start').value);
+    const a2 = parseInt(document.getElementById('end').value) || a1;
+    const col = document.getElementById('col').value;
+    const zone = document.getElementById('zone').value;
+    const zId = `${col}-${zone}`;
+
+    for (let i = a1; i <= a2; i++) { try { const res=await
+        fetch(`https://api.alquran.cloud/v1/ayah/${s}:${i}/quran-simple-clean`); const d=await res.json(); let
+        t=d.data.text; if (i===1 && s !=="1" && t.startsWith("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ"))
+        t=t.replace("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", "" ).trim(); const
+        audio=`https://everyayah.com/data/Alafasy_128kbps/${s.padStart(3, '0' )}${i.toString().padStart(3, '0' )}.mp3`;
+        renderVerse(zId, i, t, audio, s); } catch (e) { console.log(e); } } } function renderVerse(zId, n, t, audio, s)
+        { const div=document.createElement('div'); div.className='verse-card' ; div.dataset.num=n; div.dataset.text=t;
+        div.dataset.zone=zId; div.dataset.audio=audio; div.dataset.surah=s; div.innerHTML=`<div>
+        <button onclick="playMurattal('${audio}')">🔊</button>
+        <button onclick="this.closest('.verse-card').remove()" style="color:var(--err); background:none; border:none;">×</button>
+        </div><span class="arabic"><b>${n}.</b> ${t}</span>`;
+        document.getElementById(zId).appendChild(div);
         }
 
-function handleLogout() {
-// 1. Reset Session Variable
-currentUser = null;
-
-// 2. Sembunyikan App, Munculkan Login secara manual (Tanpa Reload)
-document.getElementById('main-app').style.display = 'none';
-document.getElementById('auth-screen').style.display = 'flex';
-
-// 3. Bersihkan form input agar aman
-document.getElementById('login-pin').value = '';
-document.getElementById('login-err').innerText = "";
-
-// 4. Matikan audio jika sedang bunyi
-if(currentAudio) {
-currentAudio.pause();
-currentAudio = null;
-}
-
-console.log("Logout berhasil.");
-}
-
-// Cek Developer Mode
-document.getElementById('admin-btn').style.display = (user.role === 'admin') ? 'inline-block' : 'none';
-
-updateStats();
-updateLogDisplay();
-} else {
-document.getElementById('login-err').innerText = "PIN Salah!";
-}
-}
-
-        // --- ADMIN / DEVELOPER MODE ---
-        function openAdmin() { document.getElementById('admin-panel').style.display = 'flex'; renderUserAdmin(); }
-        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-        function renderUserAdmin() {
-            const list = document.getElementById('user-list-admin'); list.innerHTML = '';
-            users.forEach((u, i) => {
-                if(u.role === 'admin') return;
-                list.innerHTML += `<div class="panel" style="padding:10px; margin-bottom:5px; font-size:0.8rem;">
-                    <b>${u.name}</b> (${u.pin}) - ${u.status.toUpperCase()}<br>
-                    <button onclick="toggleUserStatus(${i})" style="margin-top:5px; background:${u.status === 'active' ? 'var(--err)' : 'var(--accent)'}">${u.status === 'active' ? 'Nonaktifkan' : 'Aktifkan'}</button>
-                </div>`;
-            });
-        }
-        function toggleUserStatus(i) {
-            users[i].status = (users[i].status === 'active') ? 'inactive' : 'active';
-            localStorage.setItem('iq_users', JSON.stringify(users));
-            renderUserAdmin();
+        // --- QUIZ SYSTEM ---
+        function startSession(mode) {
+        const all = document.querySelectorAll('.verse-card');
+        if (!all.length) return alert("Papan Kosong!");
+        quizMode = mode; curSess = 0; maxSess = all.length;
+        ayahQueue = Array.from(all).sort(() => Math.random() - 0.5);
+        all.forEach(card => card.classList.add('hidden-verse'));
+        document.getElementById('quiz-ui').style.display = 'block';
+        nextQuestion();
         }
 
-        // --- TABS ---
-        function switchTab(name) {
-            document.getElementById('papan-area').style.display = (name === 'papan') ? 'block' : 'none';
-            document.getElementById('mushaf-area').style.display = (name === 'mushaf') ? 'block' : 'none';
-            document.getElementById('tab-papan-btn').classList.toggle('active', name === 'papan');
-            document.getElementById('tab-mushaf-btn').classList.toggle('active', name === 'mushaf');
+        function nextQuestion() {
+        if (curSess >= maxSess) {
+        speak("Alhamdulillah, kuis selesai!", 'id-ID');
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.querySelectorAll('.verse-card').forEach(card => card.classList.remove('hidden-verse'));
+        return;
+        }
+        targetAyah = ayahQueue[curSess];
+        curSess++;
+        const [side, pos] = targetAyah.dataset.zone.split('-');
+        document.getElementById('session-info').innerText = `${curSess} / ${maxSess}`;
+        document.getElementById('mic-btn').style.display = 'inline-block';
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback-area').innerHTML = '';
+        document.querySelectorAll('.zone').forEach(z => z.classList.remove('active-target'));
+
+        if (quizMode === 'lafal') {
+        recognition.lang = 'ar-SA';
+        const msg = `Baca ayat ke ${targetAyah.dataset.num} di ${side} ${pos}`;
+        document.getElementById('instruction').innerText = msg;
+        speak(msg, 'id-ID');
+        } else {
+        recognition.lang = 'id-ID';
+        document.getElementById('instruction').innerText = "Dengarkan murattal...";
+        playMurattal(targetAyah.dataset.audio, () => speak("Sebutkan posisi zona dan nomor ayat!", 'id-ID'));
+        }
         }
 
-        // --- MUSHAF PRESISE ---
-        async function bukaMushafPresisi() {
-            const s = document.getElementById('mushaf-surah').value;
-            const a = document.getElementById('mushaf-ayah').value;
-            if(!s || !a) return alert("Isi Surah & Ayat!");
-            try {
-                const res = await fetch(`https://api.alquran.cloud/v1/ayah/${s}:${a}`);
-                const d = await res.json();
-                const url = `https://quran.kemenag.go.id/quran/per-halaman/surah/${s}?page=${d.data.page}`;
-                window.open(url, '_blank');
-            } catch(e) { alert("Data tidak ditemukan."); }
-        }
-
-        // --- KUIS & LOG HAFALAN ---
-        async function fetchAyah() {
-            const s = document.getElementById('surah').value, a1 = parseInt(document.getElementById('start').value);
-            const a2 = parseInt(document.getElementById('end').value) || a1, zId = `${document.getElementById('col').value}-${document.getElementById('zone').value}`;
-            for(let i=a1; i<=a2; i++) {
-                try {
-                    const res = await fetch(`https://api.alquran.cloud/v1/ayah/${s}:${i}/quran-simple-clean`);
-                    const d = await res.json();
-                    let t = d.data.text;
-                    if(i===1 && s!=="1" && t.startsWith("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ")) t = t.replace("بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ", "").trim();
-                    const audio = `https://everyayah.com/data/Alafasy_128kbps/${s.padStart(3,'0')}${i.toString().padStart(3,'0')}.mp3`;
-                    renderVerse(zId, i, t, audio, s);
-                } catch(e) { console.log(e); }
-            }
-        }
-
-        function renderVerse(zId, n, t, audio, s) {
-            const div = document.createElement('div'); div.className = 'verse-card';
-            div.dataset.num = n; div.dataset.text = t; div.dataset.zone = zId; div.dataset.audio = audio; div.dataset.surah = s;
-            div.innerHTML = `<div><button onclick="playMurattal('${audio}')">🔊</button> <button onclick="this.closest('.verse-card').remove()" style="color:var(--err); background:none; border:none;">×</button></div><span class="arabic"><b>${n}.</b> ${t}</span>`;
-            document.getElementById(zId).appendChild(div);
-        }
-
-function processResult() {
-let win = false;
-const input = lastSpeech.toLowerCase();
-const targetZone = targetAyah.dataset.zone;
-const [sideTarget, posTarget] = targetZone.split('-');
-
-if (quizMode === 'posisi') {
-// Kuis posisi tetap butuh jawaban lengkap (Sisi, Baris, Nomor)
-if (input.includes(sideTarget) && input.includes(posTarget) && input.includes(targetAyah.dataset.num)) win = true;
-} else {
-// KUIS HAFALAN: Hanya cek kebenaran bacaan Arab (Zona hanya di instruksi soal)
-const tC = targetAyah.dataset.text.replace(/[\u064B-\u065F\u0670]/g, "").replace(/[أإآ]/g, "ا");
-const iC = input.replace(/[أإآ]/g, "ا");
-
-let matchCount = 0;
-const words = tC.split(' ');
-words.forEach(w => { if(iC.includes(w)) matchCount++; });
-
-// Jika 70% kata benar, dianggap lulus
-if ((matchCount / words.length) >= 0.7) win = true;
-}
-
-if (win) {
-score += 10; corrects++; speak("Benar!", 'id-ID');
-const now = new Date();
-logHafalan.unshift({
-surah: targetAyah.dataset.surah,
-ayat: targetAyah.dataset.num,
-tgl: now.toLocaleDateString('id-ID'),
-jam: now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0')
-});
-localStorage.setItem('iq_log', JSON.stringify(logHafalan));
-updateLogDisplay();
-} else {
-if (quizMode === 'posisi') {
-speak(`Salah. Harusnya di ${sideTarget} ${posTarget} ayat ${targetAyah.dataset.num}`, 'id-ID');
-} else {
-speak("Belum tepat. Coba ingat lagi bacaannya.", 'id-ID');
-
-}
-targetAyah.classList.remove('hidden-verse');
-
-// ... (sisa fungsi updateStats, log, dan feedback tetap sama) ...
-document.getElementById('feedback-area').innerHTML = `<span class="arabic">${targetAyah.dataset.text}</span>`;
-document.getElementById(targetAyah.dataset.zone).classList.add('active-target');
-}
-
-
-targetAyah.classList.remove('hidden-verse');
-history.push({acc: win ? 100 : 0});
-updateStats();
-document.getElementById('mic-btn').style.display = 'none';
-document.getElementById('next-btn').style.display = 'inline-block';
-document.getElementById('feedback-area').innerHTML = `<span class="arabic">${targetAyah.dataset.text}</span>`;
-document.getElementById(targetZone).classList.add('active-target');
-}
-
-        function updateLogDisplay() {
-            const list = document.getElementById('hafalan-log-list');
-            if(logHafalan.length === 0) return;
-            list.innerHTML = logHafalan.map(l => `
-                <div class="log-item">
-                    <span>Surah ${l.surah}: Ayat ${l.ayat}</span>
-                    <span>${l.tgl} | ${l.jam}</span>
-                </div>
-            `).join('');
-        }
-
-        // --- FUNGSI STANDAR LAINNYA ---
-        function updateStats() {
-            localStorage.setItem('iq_score', score); localStorage.setItem('iq_corrects', corrects); localStorage.setItem('iq_history', JSON.stringify(history));
-            document.getElementById('total-score').innerText = score; document.getElementById('total-correct').innerText = corrects;
-            document.getElementById('total-tests').innerText = history.length;
-            const avg = history.length ? Math.round(history.reduce((a, b) => a + b.acc, 0) / history.length) : 0;
-            document.getElementById('avg-acc').innerText = avg + "%";
-        }
-        function playMurattal(url, cb) { if(currentAudio) currentAudio.pause(); currentAudio = new Audio(url); currentAudio.onended = () => cb && cb(); currentAudio.play(); }
-        function speak(t, l, cb) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = l; u.onend = () => cb && cb(); window.speechSynthesis.speak(u); }
-function startSession(mode) {
-const all = document.querySelectorAll('.verse-card');
-if(!all.length) return alert("Papan Kosong!");
-
-quizMode = mode;
-curSess = 0;
-maxSess = all.length;
-ayahQueue = Array.from(all).sort(() => Math.random() - 0.5);
-
-// SEMBUNYIKAN SEMUA TEKS ARAB SAAT KUIS DIMULAI
-all.forEach(card => card.classList.add('hidden-verse'));
-
-document.getElementById('quiz-ui').style.display = 'block';
-nextQuestion();
-}
-function nextQuestion() {
-if(curSess >= maxSess) {
-speak("Alhamdulillah, kuis selesai!", 'id-ID');
-document.getElementById('quiz-ui').style.display = 'none';
-// Tampilkan kembali semua ayat setelah kuis benar-benar selesai
-document.querySelectorAll('.verse-card').forEach(card => card.classList.remove('hidden-verse'));
-return;
-}
-
-targetAyah = ayahQueue[curSess];
-curSess++;
-
-const [side, pos] = targetAyah.dataset.zone.split('-');
-document.getElementById('session-info').innerText = `${curSess} / ${maxSess}`;
-document.getElementById('mic-btn').style.display = 'inline-block';
-document.getElementById('next-btn').style.display = 'none';
-document.getElementById('feedback-area').innerHTML = '';
-document.querySelectorAll('.zone').forEach(z => z.classList.remove('active-target'));
-
-if(quizMode === 'lafal') {
-recognition.lang = 'ar-SA';
-// INSTRUKSI: Sebutkan lokasi agar user tahu kotak mana yang sedang diuji
-const msg = `Coba baca ayat ke ${targetAyah.dataset.num} yang ada di ${side} ${pos}`;
-document.getElementById('instruction').innerText = msg;
-speak(msg, 'id-ID');
-} else {
-recognition.lang = 'id-ID';
-document.getElementById('instruction').innerText = "Dengarkan murattal...";
-setTimeout(() => {
-playMurattal(targetAyah.dataset.audio, () => {
-speak("Sebutkan posisi zona dan nomor ayatnya!", 'id-ID');
-});
-}, 500);
-}
-}
         function toggleMic() {
-            const btn = document.getElementById('mic-btn');
-            if(btn.classList.contains('listening')) { recognition.stop(); btn.classList.remove('listening'); btn.innerText = "🎤 Bicara"; setTimeout(processResult, 700); }
-            else { lastSpeech = ""; recognition.start(); btn.classList.add('listening'); btn.innerText = "🛑 SELESAI"; }
+        const btn = document.getElementById('mic-btn');
+        if (btn.classList.contains('listening')) {
+        recognition.stop();
+        btn.classList.remove('listening');
+        btn.innerText = "🎤 Bicara";
+        setTimeout(processResult, 700);
+        } else {
+        lastSpeech = "";
+        recognition.start();
+        btn.classList.add('listening');
+        btn.innerText = "🛑 SELESAI";
         }
-        recognition.onresult = (e) => { lastSpeech = Array.from(e.results).map(r => r[0].transcript).join(''); document.getElementById('live-preview').innerText = lastSpeech; };
-        function resetBoard() { if(confirm("Reset Papan?")) document.querySelectorAll('.zone').forEach(z => z.innerHTML = ''); }
-        function toggleSettings() { const p = document.getElementById('settings-panel'); p.style.display = (p.style.display === 'none') ? 'block' : 'none'; }
+        }
+
+        recognition.onresult = (e) => {
+        lastSpeech = Array.from(e.results).map(r => r[0].transcript).join('');
+        document.getElementById('live-preview').innerText = lastSpeech;
+        };
+
+        function processResult() {
+        let win = false;
+        const input = lastSpeech.toLowerCase();
+        const targetZone = targetAyah.dataset.zone;
+        const [sideTarget, posTarget] = targetZone.split('-');
+
+        if (quizMode === 'posisi') {
+        if (input.includes(sideTarget) && input.includes(posTarget) && input.includes(targetAyah.dataset.num)) win =
+        true;
+        } else {
+        const tC = targetAyah.dataset.text.replace(/[\u064B-\u065F\u0670]/g, "").replace(/[أإآ]/g, "ا");
+        let matchCount = 0;
+        const words = tC.split(' ');
+        words.forEach(w => { if (input.includes(w)) matchCount++; });
+        if ((matchCount / words.length) >= 0.7) win = true;
+        }
+
+        if (win) {
+        score += 10; corrects++; speak("Benar!", 'id-ID');
+        const now = new Date();
+        logHafalan.unshift({ surah: targetAyah.dataset.surah, ayat: targetAyah.dataset.num, tgl:
+        now.toLocaleDateString('id-ID'), jam: now.getHours().toString().padStart(2, '0') + ":" +
+        now.getMinutes().toString().padStart(2, '0') });
+        localStorage.setItem('iq_log', JSON.stringify(logHafalan));
+        updateLogDisplay();
+        } else {
+        speak(quizMode === 'posisi' ? `Salah, di ${sideTarget} ${posTarget} ayat ${targetAyah.dataset.num}` : "Belum tepat coba diingat lagi", 'id-ID');
+        }
+
+        targetAyah.classList.remove('hidden-verse');
+        history.push({ acc: win ? 100 : 0 });
+        updateStats();
+        document.getElementById('mic-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        document.getElementById('feedback-area').innerHTML = `<span class="arabic">${targetAyah.dataset.text}</span>`;
+        document.getElementById(targetZone).classList.add('active-target');
+        }
+
+        // --- UTILS ---
+        function updateStats() {
+        localStorage.setItem('iq_score', score); localStorage.setItem('iq_corrects', corrects);
+        localStorage.setItem('iq_history', JSON.stringify(history));
+        document.getElementById('total-score').innerText = score; document.getElementById('total-correct').innerText =
+        corrects;
+        document.getElementById('total-tests').innerText = history.length;
+        const avg = history.length ? Math.round(history.reduce((a, b) => a + b.acc, 0) / history.length) : 0;
+        document.getElementById('avg-acc').innerText = avg + "%";
+        }
+        function updateLogDisplay() {
+        const list = document.getElementById('hafalan-log-list');
+        if (logHafalan.length === 0) return;
+        list.innerHTML = logHafalan.map(l => `<div class="log-item">
+            <span>Surah ${l.surah}: ${l.ayat}</span><span>${l.tgl}</span></div>`).join('');
+        }
+        function playMurattal(url, cb) { if (currentAudio) currentAudio.pause(); currentAudio = new Audio(url);
+        currentAudio.onended = () => cb && cb(); currentAudio.play(); }
+        function speak(t, l, cb) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang =
+        l; u.onend = () => cb && cb(); window.speechSynthesis.speak(u); }
+        function resetBoard() { if (confirm("Reset Papan?")) document.querySelectorAll('.zone').forEach(z => z.innerHTML
+        = ''); }
+        function toggleSettings() { alert("Fitur PIN Mandiri segera hadir!"); }
+
     </script>
 </body>
 
