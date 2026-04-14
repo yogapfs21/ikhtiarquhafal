@@ -408,7 +408,7 @@ border-radius: 5px;
         let history = JSON.parse(localStorage.getItem('iq_history')) || [];
         let logHafalan = JSON.parse(localStorage.getItem('iq_log')) || [];
 
-        let currentUser = null, quizMode = '', curSess = 0, maxSess = 0, targetAyah = null, lastSpeech = '', currentAudio = null, ayahQueue = [];
+        let currentUser = user, quizMode = '', curSess = 0, maxSess = 0, targetAyah = null, lastSpeech = '', currentAudio = null, ayahQueue = [];
         const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRec();
         recognition.interimResults = true; recognition.continuous = true;
@@ -419,8 +419,8 @@ border-radius: 5px;
             document.getElementById('login-box').style.display = isLogin ? 'none' : 'block';
             document.getElementById('register-box').style.display = isLogin ? 'block' : 'none';
         }
-
-        function handleRegisterSubmit() {
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzphzxh2DcsxfrLOyg6gZMm6zaQcpq0LIib-Z-Y8ofdaB-or7FR18Az1xBoQ3eJnepPZQ/exec";
+        async function handleRegisterSubmit() {
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const wa = document.getElementById('regWA').value.trim();
@@ -430,9 +430,13 @@ border-radius: 5px;
 
             if(!name || !wa || pin.length < 4) return alert("Lengkapi Form & PIN min 4 angka!");
 
-            // Simpan ke daftar user (Status Inactive sampai diaktifkan Admin)
-            users.push({ name, pin, role: 'user', status: 'inactive', email, wa, dom, ig });
-            localStorage.setItem('iq_users', JSON.stringify(users));
+          const newUser = { action: "register", pin, name, email, wa, domisili, ig };
+// 1. KIRIM KE GOOGLE SHEETS
+try {
+await fetch(SCRIPT_URL, {
+method: "POST",
+body: JSON.stringify(newUser)
+});
 
             const pesan = `Assalamu'alaikum Admin Ikhtiarqu, saya ingin aktivasi akun:%0A%0ANama: ${name}%0AEmail: ${email}%0AWA: ${wa}%0ADomisili: ${dom}%0AIG: ${ig}%0APIN: ${pin}`;
             window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank'); // Ganti nomor WA Admin di sini
@@ -441,12 +445,57 @@ border-radius: 5px;
             location.reload();
         }
 
-        function handleLogin() {
-            const pin = document.getElementById('login-pin').value;
-            const user = users.find(u => u.pin === pin);
-            if(user) {
-                if(user.status !== 'active') return alert("Akun belum aktif. Hubungi Admin.");
-                currentUser = user;
+async function handleLogin() {
+const pinInput = document.getElementById('pinInput').value.trim();
+const errorEl = document.getElementById('loginError');
+
+if (!pinInput) {
+alert("Masukkan PIN dulu, Fer!");
+return;
+}
+
+errorEl.textContent = "⌛ Mengecek PIN di Langit...";
+errorEl.classList.remove('hidden');
+
+try {
+// Ambil data terbaru dari Google Sheets
+const response = await fetch(SCRIPT_URL);
+if (!response.ok) throw new Error('Network error');
+
+const users = await response.json();
+
+// Cari user yang PIN-nya cocok
+const user = users.find(u => u.pin === pinInput);
+
+if (user) {
+// Cek apakah statusnya sudah 'active' (ditulis manual oleh kamu di Sheets)
+if (user.status === 'active') {
+currentUser = {
+pin: user.pin,
+name: user.name,
+role: 'user'
+};
+sessionStorage.setItem('currentUserPin', pinInput);
+errorEl.classList.add('hidden');
+showMainApp();
+} else {
+errorEl.textContent = '🚫 Akun terdaftar tapi BELUM AKTIF. Chat Admin ya!';
+}
+} else {
+// Jika tidak ada di Sheets, cek Admin Default
+if (pinInput === '2399') {
+currentUser = { pin: '2399', name: 'Administrator', role: 'admin' };
+sessionStorage.setItem('currentUserPin', '2399');
+showMainApp();
+} else {
+errorEl.textContent = '❌ PIN salah atau belum terdaftar.';
+}
+}
+} catch (e) {
+console.error(e);
+errorEl.textContent = '📡 Koneksi internet bermasalah. Coba lagi.';
+}
+                
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('display-name').innerText = currentUser.name;
