@@ -297,7 +297,6 @@
                 <input type="text" id="regDomisili" placeholder="Domisili" style="width:100%; margin-bottom:8px;">
                 <input type="text" id="regIG" placeholder="Instagram (tidak punya isi-)" style="width:100%; margin-bottom:8px;">
                 <input type="password" id="regPin" placeholder="Request PIN (min. 4 angka)" style="width:100%; margin-bottom:15px;">
-                <div class="flex flex-col gap-3">
                 <button onclick="handleRegisterSubmit()" class="btn-accent" style="width:100%;">Kirim Aktivasi ke Admin</button>
                 <p onclick="toggleAuthMode()"
                     style="color:var(--err); cursor:pointer; font-size: 0.8rem; margin-top: 15px; text-align: center;">
@@ -418,60 +417,32 @@
         const SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbyOJeJXMRs4YVzOeM5coVoi36obeFR38ZMYj3qt5i2yMUlivE2GcVSVhOXMiaLMsUcT0A/exec";
 
-
+// --- GLOBAL STATE ---
 let currentUser = null;
+let users = []; // Untuk keperluan Admin Panel
 let score = parseInt(localStorage.getItem('iq_score')) || 0;
 let corrects = parseInt(localStorage.getItem('iq_corrects')) || 0;
 let history = JSON.parse(localStorage.getItem('iq_history')) || [];
 let logHafalan = JSON.parse(localStorage.getItem('iq_log')) || [];
+
 let quizMode = '', curSess = 0, maxSess = 0, targetAyah = null, lastSpeech = '', currentAudio = null, ayahQueue = [];
 
+// --- SPEECH RECOGNITION SETUP ---
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRec();
 recognition.interimResults = true;
 recognition.continuous = true;
 
-// --- BLOK 1: NAVIGASI DASAR (WAJIB DI ATAS) ---
+// --- AUTH FUNCTIONS ---
 function toggleAuthMode() {
-const lb = document.getElementById('login-box');
-const rb = document.getElementById('register-box');
-const er = document.getElementById('login-err');
-if(er) er.innerText = "";
-if (lb.style.display !== 'none') {
-lb.style.display = 'none';
-rb.style.display = 'block';
+const loginBox = document.getElementById('login-box');
+const registerBox = document.getElementById('register-box');
+if (loginBox.style.display !== 'none') {
+loginBox.style.display = 'none';
+registerBox.style.display = 'block';
 } else {
-lb.style.display = 'block';
-rb.style.display = 'none';
-}
-}
-
-async function handleLogin() {
-const pinInput = document.getElementById('login-pin').value.trim();
-const errorEl = document.getElementById('login-err');
-if (!pinInput) return alert("Masukkan PIN!");
-errorEl.innerText = "⌛ Menghubungkan ke langit...";
-try {
-const response = await fetch(SCRIPT_URL);
-const allUsers = await response.json();
-const user = allUsers.find(u => u.pin.toString() === pinInput);
-if (user) {
-if (user.status === 'active') {
-currentUser = user;
-document.getElementById('auth-screen').style.display = 'none';
-document.getElementById('main-app').style.display = 'block';
-document.getElementById('display-name').innerText = user.name;
-if(pinInput === "2399") document.getElementById('admin-btn').style.display = 'inline-block';
-updateStats();
-updateLogDisplay();
-} else {
-errorEl.innerText = "🚫 Akun belum aktif.";
-}
-} else {
-errorEl.innerText = "❌ PIN tidak ditemukan.";
-}
-} catch (e) {
-errorEl.innerText = "📡 Gagal ambil data GSheet.";
+loginBox.style.display = 'block';
+registerBox.style.display = 'none';
 }
 }
 
@@ -482,13 +453,56 @@ const wa = document.getElementById('regWA').value.trim();
 const dom = document.getElementById('regDomisili').value.trim();
 const ig = document.getElementById('regIG').value.trim() || "-";
 const pin = document.getElementById('regPin').value.trim();
-if (!name || !wa || pin.length < 4) return alert("Lengkapi data!"); const params=new URLSearchParams();
-    params.append('action', 'register' ); params.append('name', name); params.append('email', email);
-    params.append('wa', wa); params.append('domisili', dom); params.append('ig', ig); params.append('pin', pin); try {
-    fetch(SCRIPT_URL, { method: "POST" , mode: "no-cors" , body: params }); const pesan=`Assalamu'alaikum Admin,
-    aktivasi akun Ikhtiarqu:%0ANama: ${name}%0ADomisili: ${dom}%0APIN: ${pin}`;
-    window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank' ); alert("Terdaftar! Tunggu aktivasi Admin.");
-    location.reload(); } catch (e) { alert("Gagal koneksi."); } }
+
+if (!name || !wa || pin.length < 4) return alert("Lengkapi data & PIN min 4 angka!"); 
+const params=new URLSearchParams(); 
+params.append('action', 'register' ); 
+params.append('name', name); 
+params.append('email', email);
+params.append('wa', wa); 
+params.append('domisili', dom); 
+params.append('ig', ig); 
+params.append('pin', pin); 
+
+try {
+    fetch(SCRIPT_URL, { 
+    method: "POST" , 
+    mode: "no-cors" , 
+    body: params }); 
+    const pesan=`Assalamu'alaikum Admin, aktivasi akun Ikhtiarqu:%0ANama: ${name}%0ADomisili: ${dom}%0APIN: ${pin}`;
+    window.open(`https://wa.me/6285748110997?text=${pesan}`, '_blank' ); 
+    alert("Data pendaftaran terkirim! Silakan tunggu konfirmasi Admin via WhatsApp."); location.reload(); } catch (e) { alert("Waduh, koneksi bermasalah."); } }
+
+async function handleLogin() {
+    const pinInput = document.getElementById('login-pin').value.trim();
+    const errorEl = document.getElementById('login-err');
+
+    if (!pinInput) return alert("Isi PIN!");
+
+    errorEl.innerText = "⌛ Mengecek database...";
+
+    try {
+        const res = await fetch(SCRIPT_URL);
+        const allUsers = await res.json();
+        const user = allUsers.find(u => u.pin.toString() === pinInput);
+
+        if (user) {
+            if (user.status === 'active') {
+                currentUser = user;
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('display-name').innerText = user.name;
+                updateStats();
+            } else {
+                errorEl.innerText = "🚫 Akun belum aktif.";
+            }
+        } else {
+            errorEl.innerText = "❌ PIN tidak terdaftar.";
+        }
+    } catch (e) {
+        errorEl.innerText = "📡 Gagal ambil data GSheet.";
+    }
+}
     function handleLogout() {
     currentUser = null;
     document.getElementById('main-app').style.display = 'none';
